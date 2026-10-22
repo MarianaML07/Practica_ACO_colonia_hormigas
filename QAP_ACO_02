@@ -1,1 +1,63 @@
+import numpy as np
 
+def cargar_datos_qap(ruta_archivo):
+    with open(ruta_archivo, 'r') as f:
+        lineas = f.read().split()
+
+    if not lineas:
+        raise ValueError("El archivo está vacío")
+
+    # El primer elemento es el número de nodos (n)
+    n = int(lineas[0])
+
+    # Los siguientes n * n elementos corresponden a la matriz de distancias (A)
+    inicio_dist = 1
+    fin_dist = inicio_dist + n * n
+    A = np.array([float(x) for x in lineas[inicio_dist:fin_dist]]).reshape((n, n))
+
+    # Los siguientes n * n elementos corresponden a la matriz de flujos (B)
+    inicio_flujo = fin_dist
+    fin_flujo = inicio_flujo + n * n
+    B = np.array([float(x) for x in lineas[inicio_flujo:fin_flujo]]).reshape((n, n))
+
+    return n, A, B
+
+def funcion_objetivo_qap(p, A, B):
+    """
+    Calcula el costo de una asignación dada por la permutación p.
+    p es una lista o array que representa a qué locación se asigna cada instalación.
+    A: Matriz de distancias entre locaciones.
+    B: Matriz de flujos entre instalaciones.
+    """
+    n = len(p)
+    costo = 0.0
+    for i in range(n):
+        for j in range(n):
+            # Flujo entre instalación i y j multiplicado por la distancia entre sus locaciones p[i] y p[j]
+            #costo += A[i, j] * B[p[i], p[j]]
+            costo += A[i,j]*B[pi[i],pi[j]]
+    return costo
+
+# Cargar los datos del archivo tai12.dat
+ruta = '/content/tai30.dat'
+n, A, B = cargar_datos_qap(ruta)
+
+print(f"Número de nodos (n): {n}")
+print("\nMatriz de Distancias (A):")
+print(A)
+print("\nMatriz de Flujos (B):")
+print(B)
+
+# Crear una permutación de prueba (por ejemplo, asignación identidad [0, 1, ..., n-1])
+permutacion_prueba = list(range(n))
+print(permutacion_prueba)
+#permutacion_prueba =[7, 0, 5, 1, 10, 9, 2, 4, 8, 6, 11, 3]
+#8 1 6 2 11 10 3 5 9 7 12 4
+
+#permutacion_prueba =[7, 0, 5, 1, 10, 9, 2, 4, 8, 6, 11, 3]
+#permutacion_prueba =[4, 9, 3, 12, 1, 8, 0, 10, 11, 13, 6, 14, 2, 7, 5]
+permutacion_prueba =[ 18, 17, 3, 23, 29, 24, 4, 6, 0, 21, 27, 19, 10, 12, 8, 15, 7, 9, 16, 20, 11, 28, 1, 14, 2, 13, 25, 26, 22, 5]
+
+costo_prueba = funcion_objetivo_qap(permutacion_prueba, A, B)
+print(f"\nPermutación de prueba: {permutacion_prueba}")
+print(f"Costo de la función objetivo: {costo_prueba}")
